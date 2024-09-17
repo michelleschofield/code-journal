@@ -10,6 +10,9 @@ $photoURL.addEventListener('input', (event) => {
   const url = $eventTarget.value;
   $photo.setAttribute('src', url);
 });
+$photo.addEventListener('error', () => {
+  $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+});
 $form.addEventListener('submit', (event) => {
   event.preventDefault();
   if (!$form) return;

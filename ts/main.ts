@@ -15,7 +15,12 @@ if (!$form) throw new Error('$form query failed');
 $photoURL.addEventListener('input', (event: Event) => {
   const $eventTarget = event.target as HTMLInputElement;
   const url = $eventTarget.value;
+
   $photo.setAttribute('src', url);
+});
+
+$photo.addEventListener('error', () => {
+  $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
 });
 
 $form.addEventListener('submit', (event: Event) => {
