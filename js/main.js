@@ -1,48 +1,116 @@
-'use strict';
+"use strict";
 const $photoURL = document.querySelector('#photo-url');
 const $photo = document.querySelector('img');
 const $form = document.querySelector('form');
-if (!$photoURL) throw new Error('$photoURL query failed');
-if (!$photo) throw new Error('$photo query failed');
-if (!$form) throw new Error('$form query failed');
+const $list = document.querySelector('ul');
+const views = document.querySelectorAll('[data-view]');
+const $entriesLink = document.querySelector('a');
+const $newEntryButton = document.querySelector('#new-entry');
+if (!$photoURL)
+    throw new Error('$photoURL query failed');
+if (!$photo)
+    throw new Error('$photo query failed');
+if (!$form)
+    throw new Error('$form query failed');
+if (!$list)
+    throw new Error('$list query failed');
+if (!$entriesLink)
+    throw new Error('$entriesLink query failed');
+if (!$newEntryButton)
+    throw new Error('$newEntryButton');
+document.addEventListener('DOMContentLoaded', () => {
+    const entries = data.entries;
+    for (let i = 0; i < entries.length; i++) {
+        const $listItem = renderEntry(entries[i]);
+        $list.appendChild($listItem);
+    }
+});
 $photoURL.addEventListener('input', (event) => {
-  const $eventTarget = event.target;
-  const url = $eventTarget.value;
-  if (isValid(url)) {
-    $photo.setAttribute('src', url);
-  } else {
-    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
-  }
+    const $eventTarget = event.target;
+    const url = $eventTarget.value;
+    if (isValid(url)) {
+        $photo.setAttribute('src', url);
+    }
+    else {
+        $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+    }
 });
 $photo.addEventListener('error', () => {
-  $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
 });
 $form.addEventListener('submit', (event) => {
-  event.preventDefault();
-  if (!$form) return;
-  const $formElements = $form.elements;
-  const title = $formElements.title.value;
-  const url = $formElements.url.value;
-  const notes = $formElements.notes.value;
-  const entryId = data.nextEntryId;
-  const entry = {
-    title,
-    url,
-    notes,
-    entryId,
-  };
-  data.nextEntryId++;
-  data.entries.push(entry);
-  writeData();
-  $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
-  $form.reset();
+    event.preventDefault();
+    if (!$form)
+        return;
+    const $formElements = $form.elements;
+    const title = $formElements.title.value;
+    const url = $formElements.url.value;
+    const notes = $formElements.notes.value;
+    const entryId = data.nextEntryId;
+    const entry = {
+        title,
+        url,
+        notes,
+        entryId,
+    };
+    data.nextEntryId++;
+    data.entries.push(entry);
+    writeData();
+    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+    $form.reset();
+});
+$entriesLink.addEventListener('click', () => {
+    viewSwap('entries');
+});
+$newEntryButton.addEventListener('click', () => {
+    viewSwap('entry-form');
 });
 function isValid(urlToCheck) {
-  const image = new Image();
-  image.src = urlToCheck;
-  if (image.width === 0) {
-    return false;
-  } else {
-    return true;
-  }
+    const image = new Image();
+    image.src = urlToCheck;
+    if (image.width === 0) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+function renderEntry(entry) {
+    const $li = document.createElement('li');
+    const $row = document.createElement('div');
+    const $firstColumn = document.createElement('div');
+    const $img = document.createElement('img');
+    const $secondColumn = document.createElement('div');
+    const $title = document.createElement('h3');
+    const $notes = document.createElement('p');
+    $row.className = 'row';
+    $firstColumn.className = 'column-half';
+    $secondColumn.className = 'column-half';
+    const url = entry.url;
+    if (isValid(url)) {
+        $img.setAttribute('src', url);
+    }
+    else {
+        $img.setAttribute('src', 'images/placeholder-image-square.jpg');
+    }
+    $title.textContent = entry.title;
+    $notes.textContent = entry.notes;
+    $li.appendChild($row);
+    $row.append($firstColumn, $secondColumn);
+    $firstColumn.appendChild($img);
+    $secondColumn.append($title, $notes);
+    return $li;
+}
+function viewSwap(view) {
+    for (let i = 0; i < views.length; i++) {
+        const $view = views[i];
+        if ($view.dataset.view === view) {
+            $view.className = '';
+        }
+        else {
+            $view.className = 'hidden';
+        }
+    }
+    data.view = view;
+    writeData();
 }

@@ -4,13 +4,34 @@ interface FormElements extends HTMLFormControlsCollection {
   notes: HTMLTextAreaElement;
 }
 
+interface View extends HTMLDivElement {
+  dataset: {
+    view: string;
+  };
+}
+
 const $photoURL = document.querySelector('#photo-url');
 const $photo = document.querySelector('img');
 const $form = document.querySelector('form');
+const $list = document.querySelector('ul');
+const views = document.querySelectorAll('[data-view]');
+const $entriesLink = document.querySelector('a');
+const $newEntryButton = document.querySelector('#new-entry');
 
 if (!$photoURL) throw new Error('$photoURL query failed');
 if (!$photo) throw new Error('$photo query failed');
 if (!$form) throw new Error('$form query failed');
+if (!$list) throw new Error('$list query failed');
+if (!$entriesLink) throw new Error('$entriesLink query failed');
+if (!$newEntryButton) throw new Error('$newEntryButton');
+
+document.addEventListener('DOMContentLoaded', () => {
+  const entries = data.entries;
+  for (let i = 0; i < entries.length; i++) {
+    const $listItem = renderEntry(entries[i]);
+    $list.appendChild($listItem);
+  }
+});
 
 $photoURL.addEventListener('input', (event: Event) => {
   const $eventTarget = event.target as HTMLInputElement;
@@ -53,6 +74,14 @@ $form.addEventListener('submit', (event: Event) => {
   $form.reset();
 });
 
+$entriesLink.addEventListener('click', () => {
+  viewSwap('entries');
+});
+
+$newEntryButton.addEventListener('click', () => {
+  viewSwap('entry-form');
+});
+
 function isValid(urlToCheck: string): boolean {
   const image = new Image();
   image.src = urlToCheck;
@@ -61,4 +90,49 @@ function isValid(urlToCheck: string): boolean {
   } else {
     return true;
   }
+}
+
+function renderEntry(entry: Entry): HTMLLIElement {
+  const $li = document.createElement('li');
+  const $row = document.createElement('div');
+  const $firstColumn = document.createElement('div');
+  const $img = document.createElement('img');
+  const $secondColumn = document.createElement('div');
+  const $title = document.createElement('h3');
+  const $notes = document.createElement('p');
+
+  $row.className = 'row';
+  $firstColumn.className = 'column-half';
+  $secondColumn.className = 'column-half';
+
+  const url = entry.url;
+  if (isValid(url)) {
+    $img.setAttribute('src', url);
+  } else {
+    $img.setAttribute('src', 'images/placeholder-image-square.jpg');
+  }
+
+  $title.textContent = entry.title;
+  $notes.textContent = entry.notes;
+
+  $li.appendChild($row);
+  $row.append($firstColumn, $secondColumn);
+  $firstColumn.appendChild($img);
+  $secondColumn.append($title, $notes);
+
+  return $li;
+}
+
+function viewSwap(view: string): void {
+  for (let i = 0; i < views.length; i++) {
+    const $view = views[i] as View;
+    if ($view.dataset.view === view) {
+      $view.className = '';
+    } else {
+      $view.className = 'hidden';
+    }
+  }
+
+  data.view = view;
+  writeData();
 }

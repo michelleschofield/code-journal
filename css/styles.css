@@ -1,3 +1,4 @@
+ul,
 h1 {
   margin: 0;
 }
@@ -23,6 +24,18 @@ textarea.input {
   height: 6rem;
 }
 
+a {
+  text-decoration: underline;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
 .header {
   background-color: rgb(76, 36, 116);
   color: white;
@@ -32,10 +45,6 @@ textarea.input {
 
 .bg-light-gray {
   background-color: rgb(238, 238, 238);
-}
-
-.form {
-  padding-top: 0.25rem;
 }
 
 .save-button {
@@ -54,4 +63,15 @@ textarea.input {
 .notes {
   margin-top: 1rem;
   font-size: small;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
