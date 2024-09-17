@@ -17,12 +17,15 @@ $form.addEventListener('submit', (event) => {
   const title = $formElements.title.value;
   const url = $formElements.url.value;
   const notes = $formElements.notes.value;
+  const entryId = data.nextEntryId;
   const entry = {
     title,
     url,
     notes,
-    entryId: data.nextEntryId,
+    entryId,
   };
   data.nextEntryId++;
   data.entries.push(entry);
+  $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+  $form.reset();
 });
