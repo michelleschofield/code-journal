@@ -27,11 +27,13 @@ $form.addEventListener('submit', (event: Event) => {
   const url = $formElements.url.value;
   const notes = $formElements.notes.value;
 
-  const formValues = {
+  const entry: Entry = {
     title,
     url,
     notes,
+    entryId: data.nextEntryId,
   };
 
-  console.log('formValues', formValues);
+  data.nextEntryId++;
+  data.entries.push(entry);
 });
