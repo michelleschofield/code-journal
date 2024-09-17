@@ -26,6 +26,7 @@ $form.addEventListener('submit', (event) => {
   };
   data.nextEntryId++;
   data.entries.push(entry);
+  writeData();
   $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
   $form.reset();
 });
