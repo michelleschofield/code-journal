@@ -16,7 +16,11 @@ $photoURL.addEventListener('input', (event: Event) => {
   const $eventTarget = event.target as HTMLInputElement;
   const url = $eventTarget.value;
 
-  $photo.setAttribute('src', url);
+  if (isValid(url)) {
+    $photo.setAttribute('src', url);
+  } else {
+    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+  }
 });
 
 $photo.addEventListener('error', () => {
@@ -48,3 +52,13 @@ $form.addEventListener('submit', (event: Event) => {
   $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
   $form.reset();
 });
+
+function isValid(urlToCheck: string): boolean {
+  const image = new Image();
+  image.src = urlToCheck;
+  if (image.width === 0) {
+    return false;
+  } else {
+    return true;
+  }
+}

@@ -8,7 +8,11 @@ if (!$form) throw new Error('$form query failed');
 $photoURL.addEventListener('input', (event) => {
   const $eventTarget = event.target;
   const url = $eventTarget.value;
-  $photo.setAttribute('src', url);
+  if (isValid(url)) {
+    $photo.setAttribute('src', url);
+  } else {
+    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+  }
 });
 $photo.addEventListener('error', () => {
   $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
@@ -33,3 +37,12 @@ $form.addEventListener('submit', (event) => {
   $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
   $form.reset();
 });
+function isValid(urlToCheck) {
+  const image = new Image();
+  image.src = urlToCheck;
+  if (image.width === 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
