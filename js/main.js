@@ -6,6 +6,7 @@ const $list = document.querySelector('ul');
 const views = document.querySelectorAll('[data-view]');
 const $entriesLink = document.querySelector('a');
 const $newEntryButton = document.querySelector('#new-entry');
+const $noEntries = document.querySelector('#no-entries');
 if (!$photoURL)
     throw new Error('$photoURL query failed');
 if (!$photo)
@@ -18,6 +19,8 @@ if (!$entriesLink)
     throw new Error('$entriesLink query failed');
 if (!$newEntryButton)
     throw new Error('$newEntryButton');
+if (!$noEntries)
+    throw new Error('$noEntries query failed');
 document.addEventListener('DOMContentLoaded', () => {
     const entries = data.entries;
     for (let i = 0; i < entries.length; i++) {
@@ -26,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const view = data.view;
     viewSwap(view);
+    checkNoEntries();
 });
 $photoURL.addEventListener('input', (event) => {
     const $eventTarget = event.target;
@@ -62,6 +66,7 @@ $form.addEventListener('submit', (event) => {
     $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
     $form.reset();
     viewSwap('entries');
+    checkNoEntries();
 });
 $entriesLink.addEventListener('click', () => {
     viewSwap('entries');
@@ -117,4 +122,14 @@ function viewSwap(view) {
     }
     data.view = view;
     writeData();
+}
+function checkNoEntries() {
+    if ($list?.children.length) {
+        if ($noEntries) {
+            $noEntries.className = 'column-full text-center hidden';
+        }
+    }
+    else if ($noEntries) {
+        $noEntries.className = 'column-full text-center';
+    }
 }
