@@ -99,8 +99,6 @@ $form.addEventListener('submit', (event: Event) => {
 
     data.entries[index] = entry;
 
-    console.log('data', data);
-
     const $changedEntry = renderEntry(entry);
     const $oldEntry = document.querySelector(
       `[data-entry-id = '${entry.entryId}']`,
@@ -129,7 +127,12 @@ $entriesLink.addEventListener('click', () => {
 
 $newEntryButton.addEventListener('click', () => {
   viewSwap('entry-form');
+  data.editing = null;
   $newOrEditing.textContent = 'New Entry';
+  $formTitle.value = '';
+  $formNotes.value = '';
+  $photoURL.value = '';
+  $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
 });
 
 $list.addEventListener('click', (event: Event) => {
