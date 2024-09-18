@@ -31,6 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const $listItem = renderEntry(entries[i]);
     $list.appendChild($listItem);
   }
+  const view = data.view;
+  viewSwap(view);
 });
 
 $photoURL.addEventListener('input', (event: Event) => {
@@ -67,11 +69,15 @@ $form.addEventListener('submit', (event: Event) => {
   };
 
   data.nextEntryId++;
-  data.entries.push(entry);
+  data.entries.unshift(entry);
   writeData();
+
+  $list.prepend(renderEntry(entry));
 
   $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
   $form.reset();
+
+  viewSwap('entries');
 });
 
 $entriesLink.addEventListener('click', () => {
