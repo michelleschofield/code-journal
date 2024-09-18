@@ -8,8 +8,14 @@ img {
   border-radius: 0.4rem;
 }
 
-.fa-pencil {
-  padding-right: 0.5rem;
+.edit-button {
+  border: none;
+  border-radius: 1.25rem;
+  padding: 0.75rem;
+}
+
+.edit-button:hover {
+  background-color: rgb(210, 210, 210);
 }
 
 .input {

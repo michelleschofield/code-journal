@@ -30,7 +30,7 @@
       <div data-view="entry-form" class="form hidden">
         <div class="row">
           <div class="column-full">
-            <h2>New Entry</h2>
+            <h2 id="new-editing">New Entry</h2>
           </div>
         </div>
         <form>
@@ -58,7 +58,11 @@
             </div>
             <div class="column-full notes">
               <label for="notes">Notes</label>
-              <textarea class="input" name="notes" required></textarea>
+              <textarea
+                class="input"
+                name="notes"
+                id="notes"
+                required></textarea>
             </div>
           </div>
           <div class="column-full align-right">
@@ -73,22 +77,7 @@
             <button class="save-button" id="new-entry">NEW</button>
           </div>
         </div>
-        <ul>
-          <li>
-            <div class="row">
-              <div class="column-half">
-                <img src="images/placeholder-image-square.jpg" />
-              </div>
-              <div class="column-half">
-                <div class="space-between">
-                  <h3>Tester Entry</h3>
-                  <button class="fa-pencil edit-button"></button>
-                </div>
-                <p>Just for experimentation</p>
-              </div>
-            </div>
-          </li>
-        </ul>
+        <ul></ul>
         <div class="row">
           <div class="column-full text-center" id="no-entries">
             <p>Looks like you don't have any entries.</p>

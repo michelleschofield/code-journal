@@ -10,17 +10,33 @@ interface View extends HTMLDivElement {
   };
 }
 
-const $photoURL = document.querySelector('#photo-url');
-const $photo = document.querySelector('img');
-const $form = document.querySelector('form');
-const $list = document.querySelector('ul');
-const views = document.querySelectorAll('[data-view]');
-const $entriesLink = document.querySelector('a');
-const $newEntryButton = document.querySelector('#new-entry');
-const $noEntries = document.querySelector('#no-entries');
+interface LI extends HTMLLIElement {
+  dataset: {
+    entryId: string;
+  };
+}
 
+const $formTitle = document.querySelector('#title') as HTMLInputElement;
+const $formNotes = document.querySelector('#notes') as HTMLInputElement;
+const $photoURL = document.querySelector('#photo-url') as HTMLInputElement;
+const $photo = document.querySelector('img') as HTMLImageElement;
+const $newOrEditing = document.querySelector(
+  '#new-editing',
+) as HTMLHeadingElement;
+const $form = document.querySelector('form') as HTMLFormElement;
+const $list = document.querySelector('ul') as HTMLUListElement;
+const views = document.querySelectorAll('[data-view]');
+const $entriesLink = document.querySelector('a') as HTMLAnchorElement;
+const $newEntryButton = document.querySelector(
+  '#new-entry',
+) as HTMLButtonElement;
+const $noEntries = document.querySelector('#no-entries') as HTMLDivElement;
+
+if (!$formTitle) throw new Error('$formTitle query failed');
+if (!$formNotes) throw new Error('$formNotes query failed');
 if (!$photoURL) throw new Error('$photoURL query failed');
 if (!$photo) throw new Error('$photo query failed');
+if (!$newOrEditing) throw new Error('$newOrEditing query failed');
 if (!$form) throw new Error('$form query failed');
 if (!$list) throw new Error('$list query failed');
 if (!$entriesLink) throw new Error('$entriesLink query failed');
@@ -55,8 +71,8 @@ $photo.addEventListener('error', () => {
 
 $form.addEventListener('submit', (event: Event) => {
   event.preventDefault();
-
   if (!$form) return;
+
   const $formElements = $form.elements as FormElements;
 
   const title = $formElements.title.value;
@@ -71,17 +87,25 @@ $form.addEventListener('submit', (event: Event) => {
     entryId,
   };
 
-  data.nextEntryId++;
-  data.entries.unshift(entry);
-  writeData();
-
-  $list.prepend(renderEntry(entry));
-
   $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
   $form.reset();
 
-  viewSwap('entries');
+  if (data.editing) {
+    entry.entryId = data.editing.entryId;
+    const oldEntry = data.entries.map((e) =>
+      e.entryId === data.editing?.entryId ? e : false,
+    );
+    console.log('oldEntry', oldEntry);
+    data.editing = null;
+  } else {
+    $list.prepend(renderEntry(entry));
+
+    data.nextEntryId++;
+    data.entries.unshift(entry);
+  }
+  writeData();
   checkNoEntries();
+  viewSwap('entries');
 });
 
 $entriesLink.addEventListener('click', () => {
@@ -90,6 +114,30 @@ $entriesLink.addEventListener('click', () => {
 
 $newEntryButton.addEventListener('click', () => {
   viewSwap('entry-form');
+  $newOrEditing.textContent = 'New Entry';
+});
+
+$list.addEventListener('click', (event: Event) => {
+  const $eventTarget = event.target as HTMLElement;
+
+  if (!$eventTarget.className.includes('edit-button')) return;
+
+  viewSwap('entry-form');
+
+  const $li = $eventTarget.closest('li') as LI;
+  const idStr = $li.dataset.entryId;
+  const id = +idStr;
+  const entry = data.entries.find((entry) => entry.entryId === id);
+
+  if (!entry) return;
+
+  data.editing = entry;
+
+  $photo.setAttribute('src', entry.url);
+  $photoURL.value = entry.url;
+  $formTitle.value = entry.title;
+  $formNotes.value = entry.notes;
+  $newOrEditing.textContent = 'Edit Entry';
 });
 
 function isValid(urlToCheck: string): boolean {
@@ -113,11 +161,13 @@ function renderEntry(entry: Entry): HTMLLIElement {
   const $title = document.createElement('h3');
   const $notes = document.createElement('p');
 
+  $li.setAttribute('data-entry-id', `${entry.entryId}`);
+
   $row.className = 'row';
   $firstColumn.className = 'column-half';
   $secondColumn.className = 'column-half';
   $spacingDiv.className = 'space-between';
-  $editButton.className = 'fa-pencil edit-button';
+  $editButton.className = 'fa-solid fa-pencil edit-button';
 
   const url = entry.url;
   if (isValid(url)) {
