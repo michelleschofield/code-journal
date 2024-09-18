@@ -8,6 +8,10 @@ img {
   border-radius: 0.4rem;
 }
 
+.fa-pencil {
+  padding-right: 0.5rem;
+}
+
 .input {
   border-radius: 0.25rem;
   border-color: rgb(216, 216, 216);

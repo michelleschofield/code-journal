@@ -108,12 +108,16 @@ function renderEntry(entry: Entry): HTMLLIElement {
   const $firstColumn = document.createElement('div');
   const $img = document.createElement('img');
   const $secondColumn = document.createElement('div');
+  const $spacingDiv = document.createElement('div');
+  const $editButton = document.createElement('button');
   const $title = document.createElement('h3');
   const $notes = document.createElement('p');
 
   $row.className = 'row';
   $firstColumn.className = 'column-half';
   $secondColumn.className = 'column-half';
+  $spacingDiv.className = 'space-between';
+  $editButton.className = 'fa-pencil edit-button';
 
   const url = entry.url;
   if (isValid(url)) {
@@ -128,7 +132,8 @@ function renderEntry(entry: Entry): HTMLLIElement {
   $li.appendChild($row);
   $row.append($firstColumn, $secondColumn);
   $firstColumn.appendChild($img);
-  $secondColumn.append($title, $notes);
+  $secondColumn.append($spacingDiv, $notes);
+  $spacingDiv.append($title, $editButton);
 
   return $li;
 }
