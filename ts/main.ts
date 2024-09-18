@@ -31,6 +31,7 @@ const $newEntryButton = document.querySelector(
   '#new-entry',
 ) as HTMLButtonElement;
 const $noEntries = document.querySelector('#no-entries') as HTMLDivElement;
+const $deleteButton = document.querySelector('.delete') as HTMLButtonElement;
 
 if (!$formTitle) throw new Error('$formTitle query failed');
 if (!$formNotes) throw new Error('$formNotes query failed');
@@ -42,6 +43,7 @@ if (!$list) throw new Error('$list query failed');
 if (!$entriesLink) throw new Error('$entriesLink query failed');
 if (!$newEntryButton) throw new Error('$newEntryButton');
 if (!$noEntries) throw new Error('$noEntries query failed');
+if (!$deleteButton) throw new Error('$deleteButton query failed');
 
 document.addEventListener('DOMContentLoaded', () => {
   const entries = data.entries;
@@ -133,6 +135,7 @@ $newEntryButton.addEventListener('click', () => {
   $formNotes.value = '';
   $photoURL.value = '';
   $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+  $deleteButton.className = 'delete hidden';
 });
 
 $list.addEventListener('click', (event: Event) => {
@@ -156,6 +159,7 @@ $list.addEventListener('click', (event: Event) => {
   $formTitle.value = entry.title;
   $formNotes.value = entry.notes;
   $newOrEditing.textContent = 'Edit Entry';
+  $deleteButton.className = 'delete';
 });
 
 function isValid(urlToCheck: string): boolean {

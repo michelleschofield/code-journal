@@ -10,6 +10,7 @@ const views = document.querySelectorAll('[data-view]');
 const $entriesLink = document.querySelector('a');
 const $newEntryButton = document.querySelector('#new-entry');
 const $noEntries = document.querySelector('#no-entries');
+const $deleteButton = document.querySelector('.delete');
 if (!$formTitle)
     throw new Error('$formTitle query failed');
 if (!$formNotes)
@@ -30,6 +31,8 @@ if (!$newEntryButton)
     throw new Error('$newEntryButton');
 if (!$noEntries)
     throw new Error('$noEntries query failed');
+if (!$deleteButton)
+    throw new Error('$deleteButton query failed');
 document.addEventListener('DOMContentLoaded', () => {
     const entries = data.entries;
     for (let i = 0; i < entries.length; i++) {
@@ -102,6 +105,7 @@ $newEntryButton.addEventListener('click', () => {
     $formNotes.value = '';
     $photoURL.value = '';
     $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+    $deleteButton.className = 'delete hidden';
 });
 $list.addEventListener('click', (event) => {
     const $eventTarget = event.target;
@@ -120,6 +124,7 @@ $list.addEventListener('click', (event) => {
     $formTitle.value = entry.title;
     $formNotes.value = entry.notes;
     $newOrEditing.textContent = 'Edit Entry';
+    $deleteButton.className = 'delete';
 });
 function isValid(urlToCheck) {
     const image = new Image();
