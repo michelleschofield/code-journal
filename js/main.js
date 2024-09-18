@@ -1,16 +1,25 @@
 "use strict";
+const $formTitle = document.querySelector('#title');
+const $formNotes = document.querySelector('#notes');
 const $photoURL = document.querySelector('#photo-url');
 const $photo = document.querySelector('img');
+const $newOrEditing = document.querySelector('#new-editing');
 const $form = document.querySelector('form');
 const $list = document.querySelector('ul');
 const views = document.querySelectorAll('[data-view]');
 const $entriesLink = document.querySelector('a');
 const $newEntryButton = document.querySelector('#new-entry');
 const $noEntries = document.querySelector('#no-entries');
+if (!$formTitle)
+    throw new Error('$formTitle query failed');
+if (!$formNotes)
+    throw new Error('$formNotes query failed');
 if (!$photoURL)
     throw new Error('$photoURL query failed');
 if (!$photo)
     throw new Error('$photo query failed');
+if (!$newOrEditing)
+    throw new Error('$newOrEditing query failed');
 if (!$form)
     throw new Error('$form query failed');
 if (!$list)
@@ -59,20 +68,58 @@ $form.addEventListener('submit', (event) => {
         notes,
         entryId,
     };
-    data.nextEntryId++;
-    data.entries.unshift(entry);
-    writeData();
-    $list.prepend(renderEntry(entry));
     $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
     $form.reset();
-    viewSwap('entries');
+    if (data.editing) {
+        entry.entryId = data.editing.entryId;
+        const index = data.entries.findIndex((e) => e.entryId === data.editing?.entryId);
+        data.entries[index] = entry;
+        const $changedEntry = renderEntry(entry);
+        const $oldEntry = document.querySelector(`[data-entry-id = '${entry.entryId}']`);
+        if (!$oldEntry)
+            throw new Error('$oldEntry query failed');
+        $list.insertBefore($changedEntry, $oldEntry);
+        $oldEntry.remove();
+        data.editing = null;
+    }
+    else {
+        $list.prepend(renderEntry(entry));
+        data.nextEntryId++;
+        data.entries.unshift(entry);
+    }
+    writeData();
     checkNoEntries();
+    viewSwap('entries');
 });
 $entriesLink.addEventListener('click', () => {
     viewSwap('entries');
 });
 $newEntryButton.addEventListener('click', () => {
     viewSwap('entry-form');
+    data.editing = null;
+    $newOrEditing.textContent = 'New Entry';
+    $formTitle.value = '';
+    $formNotes.value = '';
+    $photoURL.value = '';
+    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+});
+$list.addEventListener('click', (event) => {
+    const $eventTarget = event.target;
+    if (!$eventTarget.className.includes('edit-button'))
+        return;
+    viewSwap('entry-form');
+    const $li = $eventTarget.closest('li');
+    const idStr = $li.dataset.entryId;
+    const id = +idStr;
+    const entry = data.entries.find((entry) => entry.entryId === id);
+    if (!entry)
+        return;
+    data.editing = entry;
+    $photo.setAttribute('src', entry.url);
+    $photoURL.value = entry.url;
+    $formTitle.value = entry.title;
+    $formNotes.value = entry.notes;
+    $newOrEditing.textContent = 'Edit Entry';
 });
 function isValid(urlToCheck) {
     const image = new Image();
@@ -90,11 +137,16 @@ function renderEntry(entry) {
     const $firstColumn = document.createElement('div');
     const $img = document.createElement('img');
     const $secondColumn = document.createElement('div');
+    const $spacingDiv = document.createElement('div');
+    const $editButton = document.createElement('button');
     const $title = document.createElement('h3');
     const $notes = document.createElement('p');
+    $li.setAttribute('data-entry-id', `${entry.entryId}`);
     $row.className = 'row';
     $firstColumn.className = 'column-half';
     $secondColumn.className = 'column-half';
+    $spacingDiv.className = 'space-between';
+    $editButton.className = 'fa-solid fa-pencil edit-button';
     const url = entry.url;
     if (isValid(url)) {
         $img.setAttribute('src', url);
@@ -107,7 +159,8 @@ function renderEntry(entry) {
     $li.appendChild($row);
     $row.append($firstColumn, $secondColumn);
     $firstColumn.appendChild($img);
-    $secondColumn.append($title, $notes);
+    $secondColumn.append($spacingDiv, $notes);
+    $spacingDiv.append($title, $editButton);
     return $li;
 }
 function viewSwap(view) {

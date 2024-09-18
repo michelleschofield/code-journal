@@ -8,6 +8,16 @@ img {
   border-radius: 0.4rem;
 }
 
+.edit-button {
+  border: none;
+  border-radius: 1.25rem;
+  padding: 0.75rem;
+}
+
+.edit-button:hover {
+  background-color: rgb(210, 210, 210);
+}
+
 .input {
   border-radius: 0.25rem;
   border-color: rgb(216, 216, 216);
