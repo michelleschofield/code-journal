@@ -7,10 +7,11 @@ const $newOrEditing = document.querySelector('#new-editing');
 const $form = document.querySelector('form');
 const $list = document.querySelector('ul');
 const views = document.querySelectorAll('[data-view]');
-const $entriesLink = document.querySelector('a');
+const $entriesLink = document.querySelector('#entries-link');
 const $newEntryButton = document.querySelector('#new-entry');
 const $noEntries = document.querySelector('#no-entries');
-const $deleteButton = document.querySelector('.delete');
+const $deleteButton = document.querySelector('#delete1');
+const $confirmationScreen = document.querySelector('dialog');
 if (!$formTitle)
     throw new Error('$formTitle query failed');
 if (!$formNotes)
@@ -33,6 +34,8 @@ if (!$noEntries)
     throw new Error('$noEntries query failed');
 if (!$deleteButton)
     throw new Error('$deleteButton query failed');
+if (!$confirmationScreen)
+    throw new Error('$confirmationScreen query failed');
 document.addEventListener('DOMContentLoaded', () => {
     const entries = data.entries;
     for (let i = 0; i < entries.length; i++) {
@@ -125,6 +128,9 @@ $list.addEventListener('click', (event) => {
     $formNotes.value = entry.notes;
     $newOrEditing.textContent = 'Edit Entry';
     $deleteButton.className = 'delete';
+});
+$deleteButton.addEventListener('click', () => {
+    $confirmationScreen.showModal();
 });
 function isValid(urlToCheck) {
     const image = new Image();

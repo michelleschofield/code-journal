@@ -26,12 +26,17 @@ const $newOrEditing = document.querySelector(
 const $form = document.querySelector('form') as HTMLFormElement;
 const $list = document.querySelector('ul') as HTMLUListElement;
 const views = document.querySelectorAll('[data-view]');
-const $entriesLink = document.querySelector('a') as HTMLAnchorElement;
+const $entriesLink = document.querySelector(
+  '#entries-link',
+) as HTMLAnchorElement;
 const $newEntryButton = document.querySelector(
   '#new-entry',
 ) as HTMLButtonElement;
 const $noEntries = document.querySelector('#no-entries') as HTMLDivElement;
-const $deleteButton = document.querySelector('.delete') as HTMLButtonElement;
+const $deleteButton = document.querySelector('#delete1') as HTMLButtonElement;
+const $confirmationScreen = document.querySelector(
+  'dialog',
+) as HTMLDialogElement;
 
 if (!$formTitle) throw new Error('$formTitle query failed');
 if (!$formNotes) throw new Error('$formNotes query failed');
@@ -44,6 +49,7 @@ if (!$entriesLink) throw new Error('$entriesLink query failed');
 if (!$newEntryButton) throw new Error('$newEntryButton');
 if (!$noEntries) throw new Error('$noEntries query failed');
 if (!$deleteButton) throw new Error('$deleteButton query failed');
+if (!$confirmationScreen) throw new Error('$confirmationScreen query failed');
 
 document.addEventListener('DOMContentLoaded', () => {
   const entries = data.entries;
@@ -160,6 +166,10 @@ $list.addEventListener('click', (event: Event) => {
   $formNotes.value = entry.notes;
   $newOrEditing.textContent = 'Edit Entry';
   $deleteButton.className = 'delete';
+});
+
+$deleteButton.addEventListener('click', () => {
+  $confirmationScreen.showModal();
 });
 
 function isValid(urlToCheck: string): boolean {
