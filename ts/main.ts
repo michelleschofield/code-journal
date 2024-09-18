@@ -92,10 +92,24 @@ $form.addEventListener('submit', (event: Event) => {
 
   if (data.editing) {
     entry.entryId = data.editing.entryId;
-    const oldEntry = data.entries.map((e) =>
-      e.entryId === data.editing?.entryId ? e : false,
+
+    const index = data.entries.findIndex(
+      (e) => e.entryId === data.editing?.entryId,
     );
-    console.log('oldEntry', oldEntry);
+
+    data.entries[index] = entry;
+
+    console.log('data', data);
+
+    const $changedEntry = renderEntry(entry);
+    const $oldEntry = document.querySelector(
+      `[data-entry-id = '${entry.entryId}']`,
+    );
+    if (!$oldEntry) throw new Error('$oldEntry query failed');
+
+    $list.insertBefore($changedEntry, $oldEntry);
+    $oldEntry.remove();
+
     data.editing = null;
   } else {
     $list.prepend(renderEntry(entry));
@@ -103,6 +117,7 @@ $form.addEventListener('submit', (event: Event) => {
     data.nextEntryId++;
     data.entries.unshift(entry);
   }
+
   writeData();
   checkNoEntries();
   viewSwap('entries');
