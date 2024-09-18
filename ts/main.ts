@@ -37,6 +37,8 @@ const $deleteButton = document.querySelector('#delete1') as HTMLButtonElement;
 const $confirmationScreen = document.querySelector(
   'dialog',
 ) as HTMLDialogElement;
+const $confirmDelete = document.querySelector('#delete2');
+const $cancelDelete = document.querySelector('#cancel');
 
 if (!$formTitle) throw new Error('$formTitle query failed');
 if (!$formNotes) throw new Error('$formNotes query failed');
@@ -50,6 +52,8 @@ if (!$newEntryButton) throw new Error('$newEntryButton');
 if (!$noEntries) throw new Error('$noEntries query failed');
 if (!$deleteButton) throw new Error('$deleteButton query failed');
 if (!$confirmationScreen) throw new Error('$confirmationScreen query failed');
+if (!$confirmDelete) throw new Error('$confirmDelete query failed');
+if (!$cancelDelete) throw new Error('$cancelDelete query failed');
 
 document.addEventListener('DOMContentLoaded', () => {
   const entries = data.entries;
@@ -170,6 +174,10 @@ $list.addEventListener('click', (event: Event) => {
 
 $deleteButton.addEventListener('click', () => {
   $confirmationScreen.showModal();
+});
+
+$cancelDelete.addEventListener('click', () => {
+  $confirmationScreen.close();
 });
 
 function isValid(urlToCheck: string): boolean {
