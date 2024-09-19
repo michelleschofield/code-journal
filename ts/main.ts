@@ -180,6 +180,30 @@ $cancelDelete.addEventListener('click', () => {
   $confirmationScreen.close();
 });
 
+$confirmDelete.addEventListener('click', () => {
+  if (!data.editing) throw new Error('attemped to delete while not editing');
+
+  const index = data.entries.findIndex(
+    (e) => e.entryId === data.editing?.entryId,
+  );
+
+  data.entries.splice(index, 1);
+
+  const $deletedEntry = document.querySelector(
+    `[data-entry-id = '${data.editing.entryId}']`,
+  );
+  if (!$deletedEntry) throw new Error('$oldEntry query failed');
+
+  $deletedEntry.remove();
+
+  data.editing = null;
+  checkNoEntries();
+  $confirmationScreen.close();
+  data.view = 'entries';
+  writeData();
+  viewSwap('entries');
+});
+
 function isValid(urlToCheck: string): boolean {
   const image = new Image();
   image.src = urlToCheck;
