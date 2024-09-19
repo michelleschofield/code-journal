@@ -19,29 +19,41 @@ interface LI extends HTMLLIElement {
 const $formTitle = document.querySelector('#title') as HTMLInputElement;
 const $formNotes = document.querySelector('#notes') as HTMLInputElement;
 const $photoURL = document.querySelector('#photo-url') as HTMLInputElement;
-const $photo = document.querySelector('img') as HTMLImageElement;
+const $formPhoto = document.querySelector('img') as HTMLImageElement;
 const $newOrEditing = document.querySelector(
   '#new-editing',
 ) as HTMLHeadingElement;
 const $form = document.querySelector('form') as HTMLFormElement;
 const $list = document.querySelector('ul') as HTMLUListElement;
 const views = document.querySelectorAll('[data-view]');
-const $entriesLink = document.querySelector('a') as HTMLAnchorElement;
+const $entriesLink = document.querySelector(
+  '#entries-link',
+) as HTMLAnchorElement;
 const $newEntryButton = document.querySelector(
   '#new-entry',
 ) as HTMLButtonElement;
 const $noEntries = document.querySelector('#no-entries') as HTMLDivElement;
+const $deleteButton = document.querySelector('#delete1') as HTMLButtonElement;
+const $confirmationScreen = document.querySelector(
+  'dialog',
+) as HTMLDialogElement;
+const $confirmDelete = document.querySelector('#delete2');
+const $cancelDelete = document.querySelector('#cancel');
 
 if (!$formTitle) throw new Error('$formTitle query failed');
 if (!$formNotes) throw new Error('$formNotes query failed');
 if (!$photoURL) throw new Error('$photoURL query failed');
-if (!$photo) throw new Error('$photo query failed');
+if (!$formPhoto) throw new Error('$formPhoto query failed');
 if (!$newOrEditing) throw new Error('$newOrEditing query failed');
 if (!$form) throw new Error('$form query failed');
 if (!$list) throw new Error('$list query failed');
 if (!$entriesLink) throw new Error('$entriesLink query failed');
 if (!$newEntryButton) throw new Error('$newEntryButton');
 if (!$noEntries) throw new Error('$noEntries query failed');
+if (!$deleteButton) throw new Error('$deleteButton query failed');
+if (!$confirmationScreen) throw new Error('$confirmationScreen query failed');
+if (!$confirmDelete) throw new Error('$confirmDelete query failed');
+if (!$cancelDelete) throw new Error('$cancelDelete query failed');
 
 document.addEventListener('DOMContentLoaded', () => {
   const entries = data.entries;
@@ -49,8 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const $listItem = renderEntry(entries[i]);
     $list.appendChild($listItem);
   }
-  const view = data.view;
-  viewSwap(view);
+
+  viewSwap(data.view);
   checkNoEntries();
 });
 
@@ -59,19 +71,18 @@ $photoURL.addEventListener('input', (event: Event) => {
   const url = $eventTarget.value;
 
   if (isValid(url)) {
-    $photo.setAttribute('src', url);
+    $formPhoto.setAttribute('src', url);
   } else {
-    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+    $formPhoto.setAttribute('src', 'images/placeholder-image-square.jpg');
   }
 });
 
-$photo.addEventListener('error', () => {
-  $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+$formPhoto.addEventListener('error', () => {
+  $formPhoto.setAttribute('src', 'images/placeholder-image-square.jpg');
 });
 
 $form.addEventListener('submit', (event: Event) => {
   event.preventDefault();
-  if (!$form) return;
 
   const $formElements = $form.elements as FormElements;
 
@@ -87,7 +98,7 @@ $form.addEventListener('submit', (event: Event) => {
     entryId,
   };
 
-  $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+  $formPhoto.setAttribute('src', 'images/placeholder-image-square.jpg');
   $form.reset();
 
   if (data.editing) {
@@ -127,12 +138,11 @@ $entriesLink.addEventListener('click', () => {
 
 $newEntryButton.addEventListener('click', () => {
   viewSwap('entry-form');
+  $form.reset();
   data.editing = null;
   $newOrEditing.textContent = 'New Entry';
-  $formTitle.value = '';
-  $formNotes.value = '';
-  $photoURL.value = '';
-  $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+  $formPhoto.setAttribute('src', 'images/placeholder-image-square.jpg');
+  $deleteButton.className = 'delete hidden';
 });
 
 $list.addEventListener('click', (event: Event) => {
@@ -151,11 +161,43 @@ $list.addEventListener('click', (event: Event) => {
 
   data.editing = entry;
 
-  $photo.setAttribute('src', entry.url);
+  $formPhoto.setAttribute('src', entry.url);
   $photoURL.value = entry.url;
   $formTitle.value = entry.title;
   $formNotes.value = entry.notes;
   $newOrEditing.textContent = 'Edit Entry';
+  $deleteButton.className = 'delete';
+});
+
+$deleteButton.addEventListener('click', () => {
+  $confirmationScreen.showModal();
+});
+
+$cancelDelete.addEventListener('click', () => {
+  $confirmationScreen.close();
+});
+
+$confirmDelete.addEventListener('click', () => {
+  if (!data.editing) throw new Error('attempted to delete while not editing');
+
+  const index = data.entries.findIndex(
+    (e) => e.entryId === data.editing?.entryId,
+  );
+
+  data.entries.splice(index, 1);
+
+  const $deletedEntry = document.querySelector(
+    `[data-entry-id = '${data.editing.entryId}']`,
+  );
+  if (!$deletedEntry) throw new Error('$deletedEntry query failed');
+
+  $deletedEntry.remove();
+  checkNoEntries();
+
+  data.editing = null;
+  $confirmationScreen.close();
+  writeData();
+  viewSwap('entries');
 });
 
 function isValid(urlToCheck: string): boolean {
@@ -209,11 +251,7 @@ function renderEntry(entry: Entry): HTMLLIElement {
 function viewSwap(view: string): void {
   for (let i = 0; i < views.length; i++) {
     const $view = views[i] as View;
-    if ($view.dataset.view === view) {
-      $view.className = '';
-    } else {
-      $view.className = 'hidden';
-    }
+    $view.className = $view.dataset.view === view ? '' : 'hidden';
   }
 
   data.view = view;
@@ -221,11 +259,10 @@ function viewSwap(view: string): void {
 }
 
 function checkNoEntries(): void {
-  if ($list?.children.length) {
-    if ($noEntries) {
-      $noEntries.className = 'column-full text-center hidden';
-    }
-  } else if ($noEntries) {
-    $noEntries.className = 'column-full text-center';
-  }
+  if (!$noEntries || !$list) return;
+  const noEntriesClass = $list.children.length
+    ? 'column-full text-center hidden'
+    : 'column-full text-center';
+
+  $noEntries.className = noEntriesClass;
 }

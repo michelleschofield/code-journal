@@ -21,13 +21,13 @@
         <div class="row">
           <div class="column-full space-between">
             <h1>Code Journal</h1>
-            <a>Entries</a>
+            <a id="entries-link">Entries</a>
           </div>
         </div>
       </div>
     </header>
-    <main class="container bg-light-gray">
-      <div data-view="entry-form" class="form hidden">
+    <main class="container">
+      <div data-view="entry-form" class="hidden">
         <div class="row">
           <div class="column-full">
             <h2 id="new-editing">New Entry</h2>
@@ -65,16 +65,33 @@
                 required></textarea>
             </div>
           </div>
-          <div class="column-full align-right">
-            <button class="save-button">Save</button>
+          <div class="column-full save-and-delete">
+            <button class="purple-button">Save</button>
+            <button id="delete1" type="button" class="delete hidden">
+              Delete Entry
+            </button>
+            <dialog class="bg-light-gray">
+              <h2>Are you sure?</h2>
+              <h2>
+                Your entry will be gone <span class="delete">forever</span>.
+              </h2>
+              <div class="save-and-delete">
+                <button id="delete2" type="button" class="delete">
+                  Confirm
+                </button>
+                <button id="cancel" type="button" class="purple-button">
+                  Cancel
+                </button>
+              </div>
+            </dialog>
           </div>
         </form>
       </div>
-      <div data-view="entries" class="">
+      <div data-view="entries">
         <div class="row">
           <div class="column-full space-between">
             <h2>Entries</h2>
-            <button class="save-button" id="new-entry">NEW</button>
+            <button class="purple-button" id="new-entry">NEW</button>
           </div>
         </div>
         <ul></ul>

@@ -22,14 +22,11 @@ function writeData(): void {
 
 function readData(): Data {
   const dataJSON = localStorage.getItem('entriesData');
-  if (!dataJSON) {
-    const defaultData = {
-      view: 'entry-form',
-      entries: [] as Entry[],
-      editing: null,
-      nextEntryId: 1,
-    };
-    return defaultData;
-  }
-  return JSON.parse(dataJSON);
+  const defaultData = {
+    view: 'entries',
+    entries: [] as Entry[],
+    editing: null,
+    nextEntryId: 1,
+  };
+  return dataJSON ? JSON.parse(dataJSON) : defaultData;
 }
