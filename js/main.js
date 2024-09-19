@@ -2,7 +2,7 @@
 const $formTitle = document.querySelector('#title');
 const $formNotes = document.querySelector('#notes');
 const $photoURL = document.querySelector('#photo-url');
-const $photo = document.querySelector('img');
+const $formPhoto = document.querySelector('img');
 const $newOrEditing = document.querySelector('#new-editing');
 const $form = document.querySelector('form');
 const $list = document.querySelector('ul');
@@ -20,8 +20,8 @@ if (!$formNotes)
     throw new Error('$formNotes query failed');
 if (!$photoURL)
     throw new Error('$photoURL query failed');
-if (!$photo)
-    throw new Error('$photo query failed');
+if (!$formPhoto)
+    throw new Error('$formPhoto query failed');
 if (!$newOrEditing)
     throw new Error('$newOrEditing query failed');
 if (!$form)
@@ -48,27 +48,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const $listItem = renderEntry(entries[i]);
         $list.appendChild($listItem);
     }
-    const view = data.view;
-    viewSwap(view);
+    viewSwap(data.view);
     checkNoEntries();
 });
 $photoURL.addEventListener('input', (event) => {
     const $eventTarget = event.target;
     const url = $eventTarget.value;
     if (isValid(url)) {
-        $photo.setAttribute('src', url);
+        $formPhoto.setAttribute('src', url);
     }
     else {
-        $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+        $formPhoto.setAttribute('src', 'images/placeholder-image-square.jpg');
     }
 });
-$photo.addEventListener('error', () => {
-    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+$formPhoto.addEventListener('error', () => {
+    $formPhoto.setAttribute('src', 'images/placeholder-image-square.jpg');
 });
 $form.addEventListener('submit', (event) => {
     event.preventDefault();
-    if (!$form)
-        return;
     const $formElements = $form.elements;
     const title = $formElements.title.value;
     const url = $formElements.url.value;
@@ -80,7 +77,7 @@ $form.addEventListener('submit', (event) => {
         notes,
         entryId,
     };
-    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+    $formPhoto.setAttribute('src', 'images/placeholder-image-square.jpg');
     $form.reset();
     if (data.editing) {
         entry.entryId = data.editing.entryId;
@@ -108,12 +105,10 @@ $entriesLink.addEventListener('click', () => {
 });
 $newEntryButton.addEventListener('click', () => {
     viewSwap('entry-form');
+    $form.reset();
     data.editing = null;
     $newOrEditing.textContent = 'New Entry';
-    $formTitle.value = '';
-    $formNotes.value = '';
-    $photoURL.value = '';
-    $photo.setAttribute('src', 'images/placeholder-image-square.jpg');
+    $formPhoto.setAttribute('src', 'images/placeholder-image-square.jpg');
     $deleteButton.className = 'delete hidden';
 });
 $list.addEventListener('click', (event) => {
@@ -128,7 +123,7 @@ $list.addEventListener('click', (event) => {
     if (!entry)
         return;
     data.editing = entry;
-    $photo.setAttribute('src', entry.url);
+    $formPhoto.setAttribute('src', entry.url);
     $photoURL.value = entry.url;
     $formTitle.value = entry.title;
     $formNotes.value = entry.notes;
@@ -143,15 +138,15 @@ $cancelDelete.addEventListener('click', () => {
 });
 $confirmDelete.addEventListener('click', () => {
     if (!data.editing)
-        throw new Error('attemped to delete while not editing');
+        throw new Error('attempted to delete while not editing');
     const index = data.entries.findIndex((e) => e.entryId === data.editing?.entryId);
     data.entries.splice(index, 1);
     const $deletedEntry = document.querySelector(`[data-entry-id = '${data.editing.entryId}']`);
     if (!$deletedEntry)
-        throw new Error('$oldEntry query failed');
+        throw new Error('$deletedEntry query failed');
     $deletedEntry.remove();
-    data.editing = null;
     checkNoEntries();
+    data.editing = null;
     $confirmationScreen.close();
     data.view = 'entries';
     writeData();
@@ -202,23 +197,16 @@ function renderEntry(entry) {
 function viewSwap(view) {
     for (let i = 0; i < views.length; i++) {
         const $view = views[i];
-        if ($view.dataset.view === view) {
-            $view.className = '';
-        }
-        else {
-            $view.className = 'hidden';
-        }
+        $view.className = $view.dataset.view === view ? '' : 'hidden';
     }
     data.view = view;
     writeData();
 }
 function checkNoEntries() {
-    if ($list?.children.length) {
-        if ($noEntries) {
-            $noEntries.className = 'column-full text-center hidden';
-        }
-    }
-    else if ($noEntries) {
-        $noEntries.className = 'column-full text-center';
-    }
+    if (!$noEntries || !$list)
+        return;
+    const noEntriesClass = $list.children.length
+        ? 'column-full text-center hidden'
+        : 'column-full text-center';
+    $noEntries.className = noEntriesClass;
 }
