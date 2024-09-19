@@ -1,37 +1,11 @@
-ul,
-h1 {
-  margin: 0;
-}
-
 img {
   width: 100%;
   border-radius: 0.4rem;
 }
 
-.edit-button {
-  border: none;
-  border-radius: 1.25rem;
-  padding: 0.75rem;
-}
-
-.edit-button:hover {
-  background-color: rgb(210, 210, 210);
-}
-
-.input {
-  border-radius: 0.25rem;
-  border-color: rgb(216, 216, 216);
-  border-style: solid;
-  border-width: 1px;
-  display: block;
-  width: 100%;
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.5rem;
-}
-
-textarea.input {
-  height: 6rem;
+ul {
+  list-style-type: none;
+  padding: 0;
 }
 
 a {
@@ -46,33 +20,21 @@ button:hover {
   cursor: pointer;
 }
 
-.header {
-  background-color: rgb(76, 36, 116);
-  color: white;
-  line-height: 4rem;
-  width: 100%;
+dialog {
+  border: none;
+  border-radius: 1rem;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+textarea.input {
+  height: 6rem;
 }
 
 .bg-light-gray {
   background-color: rgb(238, 238, 238);
-}
-
-.save-button {
-  background-color: rgb(76, 36, 116);
-  color: white;
-  line-height: 1.5rem;
-  border-radius: 0.25rem;
-  padding: 0 0.5rem;
-}
-
-.notes {
-  margin-top: 1rem;
-  font-size: small;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
 }
 
 .space-between {
@@ -83,6 +45,35 @@ ul {
 
 .text-center {
   text-align: center;
+}
+
+.purple-button {
+  background-color: rgb(76, 36, 116);
+  color: white;
+  line-height: 1.5rem;
+  border-radius: 0.25rem;
+  padding: 0 0.5rem;
+}
+
+.header {
+  background-color: rgb(76, 36, 116);
+  color: white;
+}
+
+.input {
+  border-radius: 0.25rem;
+  border-color: rgb(216, 216, 216);
+  border-style: solid;
+  border-width: 1px;
+  width: 100%;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.5rem;
+}
+
+.notes {
+  margin-top: 1rem;
+  font-size: small;
 }
 
 .delete {
@@ -97,11 +88,12 @@ ul {
   justify-content: space-between;
 }
 
-dialog {
+.edit-button {
   border: none;
-  border-radius: 1rem;
+  border-radius: 1.25rem;
+  padding: 0.75rem;
 }
 
-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.8);
+.edit-button:hover {
+  background-color: rgb(210, 210, 210);
 }
