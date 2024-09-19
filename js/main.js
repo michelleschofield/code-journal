@@ -148,7 +148,6 @@ $confirmDelete.addEventListener('click', () => {
     checkNoEntries();
     data.editing = null;
     $confirmationScreen.close();
-    data.view = 'entries';
     writeData();
     viewSwap('entries');
 });
